@@ -1,0 +1,21 @@
+{
+  "name": "sde-explorer",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Sample paths of 1D SDEs alongside the Fokker-Planck evolution of their density",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "mathjs": "^15.2.0"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.5"
+  }
+}

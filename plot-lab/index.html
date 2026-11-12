@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Interactive versions of the figures in the Fokker–Planck examples notes: exact results for diffusion processes on lines, half-lines, intervals and circles." />
+    <title>Plot Lab</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232a78d6'/%3E%3Cpath d='M5 25 C11 25 12 7 16 7 S21 25 27 25' fill='none' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="Controls">
+        <header class="brand">
+          <h1>Plot Lab</h1>
+          <p>The figures of the Fokker–Planck examples notes, with their parameters free. <a class="app-link" id="sde-link" href="#">SDE Explorer ↗</a></p>
+        </header>
+        <section class="group">
+          <label class="field">
+            <span class="field-label">Section of the notes</span>
+            <select id="page"></select>
+          </label>
+          <div class="pager">
+            <button type="button" class="btn" id="page-prev">← Previous</button>
+            <button type="button" class="btn" id="page-next">Next →</button>
+          </div>
+        </section>
+        <div id="page-controls"></div>
+      </aside>
+      <main class="main" id="page-main"></main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

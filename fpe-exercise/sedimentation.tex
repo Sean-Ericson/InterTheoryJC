@@ -1,0 +1,158 @@
+% Exercise sheet for the journal club talk on Gardiner, Chapter 5 (../fpe-slides/FPE_ch5.tex).
+% The solutions are in sedimentation-key.tex. Equation numbers are Gardiner, 2nd ed.
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,urlcolor=PineGreen]{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlist{itemsep=3pt,topsep=2pt}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\avg}[1]{\langle #1\rangle}
+
+% Title and running header at the top of each page
+\newcommand{\sheethead}[1]{%
+  {\sffamily\Large\color{PineGreen}Sedimentation in a box}\par\vspace{2pt}
+  {\sffamily\small Exercise sheet\hfill #1}\par\vspace{-7pt}
+  \rule{\textwidth}{0.5pt}\par\vspace{2pt}}
+\newcommand{\exsec}[1]{\par\vspace{4pt}{\sffamily\bfseries\large\color{PineGreen}#1}\par\vspace{-2pt}}
+
+\begin{document}
+
+% =========================================================
+\sheethead{Journal club}
+
+\textbf{Model.} A colloidal sphere sits in a vertical cell of height $L$, with the floor at $x=0$ and the ceiling at
+$x=L$. Its buoyant weight $mg$ ($m$ is its mass minus that of the fluid it displaces) pulls it down against Stokes
+friction $\gamma$, and the fluid kicks it about thermally. In the overdamped limit,
+\[ \dd x=-v\,\dd t+\sqrt D\,\dd W,\qquad v=\frac{mg}\gamma,\qquad D=\frac{2k_BT}\gamma. \]
+Throughout,
+\[ h=\frac D{2v},\qquad k_n=\frac{n\pi}L. \]
+
+\textbf{Convention:} as in the talk, $B=D$ is the variance per unit time, $\avg{(\Delta x)^2}=D\,\Delta t$, so the
+ordinary diffusion coefficient is $D/2=k_BT/\gamma$ (Einstein). Parts (a)--(d) are the core exercise; part (e) is
+an optional extension. Equation numbers refer to Gardiner, 2nd edition.
+
+\exsec{(a) The closed cell: find the stationary state}
+The walls are hard.
+\begin{enumerate}
+  \item Write the forward equation and the current $J$, and the conditions at the walls (5.2.13).
+  \item Find the stationary density $p_s(x)$ from the potential solution (5.2.39), and normalise it. Show that its
+        decay length is $h=k_BT/mg$. Why does the friction $\gamma$ drop out?
+  \item Estimate $h$ for a silica sphere of radius $0.5\,\mu$m in water, with density difference
+        $1.0\ \mathrm{g/cm^3}$, at room temperature.
+  \item Find the mean height $\avg x_s$, and check the limits $L\ll h$ and $L\gg h$.
+\end{enumerate}
+\emph{Hint:} $k_BT\approx4.0\times10^{-21}$\,J at $293$\,K. Counting grains at different heights in this
+profile is how Perrin measured Avogadro's number (\S\S5.2.1, 5.2.2).
+
+\vfill
+\newpage
+
+% =========================================================
+\sheethead{Core exercise, continued}
+
+\exsec{(b) The closed cell: find the modes}
+\begin{enumerate}
+  \item Solve the backward eigenproblem, with the reflecting condition (5.2.69) at both walls,
+        \[ -v\,Q'+\tfrac12D\,Q''=-\lambda Q,\qquad Q'(0)=Q'(L)=0. \]
+        Try $Q=e^{ax}$, and show that $a=1/2h\pm ik$ with $\lambda=v^2/2D+\frac12Dk^2$. Then show that
+        \[ Q_n=e^{x/2h}\Bigl[\cos k_nx-\frac{\sin k_nx}{2hk_n}\Bigr],\qquad
+           \lambda_n=\frac{v^2}{2D}+\frac{n^2\pi^2D}{2L^2},\qquad n=1,2,\dots, \]
+        together with $\lambda_0=0$, $Q_0=1$. Are there any other eigenvalues?
+  \item Write down $P_n=p_s\,Q_n$, and check that it carries no current through the walls.
+  \item Interpret the two terms of the spectral gap $\lambda_1$. Which one dominates in a tall cell, $L\gg h$?
+  \item A particle released at the ceiling of a tall cell, say $L=20h$, needs a time of about $L/v$ to settle.
+        Compare this with $1/\lambda_1$. How can the density relax toward $p_s$ faster than the particle can get
+        to where $p_s$ lives? Resolve the paradox.
+\end{enumerate}
+\emph{Hints:} For other eigenvalues, try a real $a$ (so $\lambda<v^2/2D$). For the paradox, look at the size of each
+term of the expansion (5.2.88), $p(x,t\,|\,x_0,0)=\sum_\lambda P_\lambda(x)\,Q_\lambda(x_0)\,e^{-\lambda t}$, for
+$x_0=L$ and $x$ near the floor.
+
+\vfill
+\newpage
+
+% =========================================================
+\sheethead{Core exercise, continued}
+
+\exsec{(c) Make the walls sticky}
+Now coat both walls so that a particle that touches either one sticks for good. Both walls become absorbing:
+$p=0$ there (5.2.14), and $Q=0$ in the backward problem (5.2.67).
+\begin{enumerate}
+  \item Why is there no stationary state now?
+  \item Find the backward eigenfunctions $Q_n$ and the rates $\lambda_n$. Compare with (b): which eigenvalue is lost,
+        and which survive?
+  \item Show that $P_n=p_s\,Q_n$ still solves the forward equation, with $p_s$ the barometric profile of (a), even
+        though $p_s$ is no longer a stationary state (5.2.91). Normalise the pair.
+  \item Show that the QSD is
+        \[ q(x)\propto e^{-x/2h}\sin\frac{\pi x}L, \]
+        and normalise it. Sketch $q$ and $p_s$ for $L=8h$, and find the height of the peak of $q$. The survivors'
+        profile decays over $2h$, not $h$, so they sit higher than particles in equilibrium. Why?
+  \item The survival probability decays as $e^{-\lambda_1t}$. At what rate does $p/S$ approach the QSD? Show that it
+        does not depend on $v$, and explain why.
+\end{enumerate}
+\emph{Hint:} $\displaystyle\int_0^Le^{-x/2h}\sin k_1x\,\dd x=\frac{k_1\,(1+e^{-L/2h})}{(2h)^{-2}+k_1^2}$
+(\S\S5.2.5, 5.2.7).
+
+\vfill
+\newpage
+
+% =========================================================
+\sheethead{Core exercise, continued}
+
+\exsec{(d) Where and when does it stick?}
+\begin{enumerate}
+  \item Show that a particle released at $x_0$ sticks to the ceiling with probability
+        \[ \pi_L(x_0)=\frac{e^{x_0/h}-1}{e^{L/h}-1}. \]
+        Use (5.2.186)--(5.2.190). For $L\gg h$, how close to the ceiling must it start to have a fair chance?
+  \item Find the mean time to stick, $T(x_0)$, from (5.2.154), and show that $T=[x_0-L\,\pi_L(x_0)]/v$. What
+        does it reduce to when $L\gg h$, away from the ceiling?
+  \item Now release particles distributed as the QSD. Without integrating anything, show that the time to stick is
+        exponential with mean $1/\lambda_1$. Find the currents through the floor and the ceiling, check that they
+        add up to $\lambda_1$, and find the fraction of particles that stick to the ceiling.
+  \item What do the results of 3 say about $\int_0^Lq\,T\,\dd x$ and $\int_0^Lq\,\pi_L\,\dd x$?
+\end{enumerate}
+\emph{Hints:} Here $\psi(x)=\exp\int^x2A/B\,\dd x'=e^{-x/h}$. Gardiner's printed (5.2.189)--(5.2.190) have
+$\psi$ where $1/\psi$ belongs. In (5.2.154), $x/v$ is a particular solution. For 3, what happens to $p(x,t)$ if it
+starts as the QSD? (\S\S5.2.7, 5.2.8)
+
+\vfill
+\newpage
+
+% =========================================================
+\sheethead{An optional extension}
+
+\exsec{(e) Optional: why the spectrum survived}
+In (c) the walls changed completely, from no current to no density, yet every nonzero rate stayed the same.
+\begin{enumerate}
+  \item Show that when $A$ and $B$ are constant, the current $J(x,t)$ of any solution obeys the same forward
+        equation as $p$.
+  \item In the closed cell, what does $J$ satisfy at the walls? Conclude that the current of each closed-cell mode
+        is a sticky-cell mode with the same rate. Check it: with $Q_n^{\rm sticky}=e^{x/2h}\sin k_nx$, and both
+        pairs normalised so that $\int P_nQ_n\,\dd x=1$, show that $J[P_n^{\rm closed}]=\tfrac12Dk_n\,
+        P_n^{\rm sticky}$. What happens to the mode $\lambda_0$?
+  \item Conversely, let $\tilde p$ be a sticky-cell mode with rate $\lambda>0$. Show that $P=\tilde p\,'/\lambda$ is a
+        closed-cell mode with the same rate, and that its current is $\tilde p$. So the two spectra differ by exactly
+        one eigenvalue, $\lambda_0=0$.
+  \item Where did you use that $A$ is constant? What equation does $J$ obey when the drift is $A(x)=-U'(x)$?
+\end{enumerate}
+\emph{Hint:} Differentiate $J=Ap-\tfrac12D\,\partial_xp$ with respect to $t$, and use $\partial_tp=-\partial_xJ$.
+
+\vfill
+
+{\footnotesize The barometric profile is the potential solution (5.2.39) with constant drift; the sticky cell is
+additional material beyond the book examples. References: J.~Perrin, \emph{Mouvement brownien et r\'ealit\'e
+mol\'eculaire}, Ann.\ Chim.\ Phys.\ (8) \textbf{18}, 5 (1909); S.~Chandrasekhar, \emph{Stochastic problems in
+physics and astronomy}, \href{https://doi.org/10.1103/RevModPhys.15.1}{Rev.\ Mod.\ Phys.\ \textbf{15}, 1 (1943)},
+chapter~II, for sedimentation as a diffusion problem. The accompanying key uses the same part labels.\par}
+
+\end{document}

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Simulate sample paths of 1D stochastic differential equations and watch the Fokker–Planck equation evolve their probability density." />
+    <title>SDE Explorer</title>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" aria-label="Controls">
+        <header class="brand">
+          <h1>SDE Explorer</h1>
+          <p>Sample paths and the Fokker–Planck equation, following Gardiner's <cite>Handbook of Stochastic Methods</cite>. <a class="app-link" id="plot-lab-link" href="#">Figures of the notes (Plot Lab) ↗</a></p>
+        </header>
+
+        <section class="group">
+          <label class="field">
+            <span class="field-label">Process</span>
+            <select id="preset"></select>
+          </label>
+          <p class="blurb"><span id="blurb"></span> <span class="ref" id="ref"></span></p>
+        </section>
+
+        <section class="group">
+          <h2>Stochastic differential equation</h2>
+          <p class="eq-small">dx = a(x,t) dt + b(x,t) dW(t)</p>
+          <label class="formula">
+            <span>a(x,t) =</span>
+            <input id="drift" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="drift-error" />
+          </label>
+          <p class="error" id="drift-error" role="alert"></p>
+          <label class="formula">
+            <span>b(x,t) =</span>
+            <input id="noise" type="text" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="noise-error" />
+          </label>
+          <p class="error" id="noise-error" role="alert"></p>
+          <div class="segmented" role="radiogroup" aria-label="Interpretation of the stochastic integral">
+            <label><input type="radio" name="interp" value="ito" checked /><span>Itô</span></label>
+            <label><input type="radio" name="interp" value="strat" /><span>Stratonovich</span></label>
+          </div>
+          <p class="hint">Stratonovich adds the drift ½ b ∂ₓb (eq. 4.3.40). Functions: sin, cos, exp, log, sqrt, abs, tanh, min, max, …</p>
+        </section>
+
+        <section class="group">
+          <h2>Parameters</h2>
+          <div id="params" class="params"></div>
+        </section>
+
+        <section class="group">
+          <h2>Initial condition</h2>
+          <div class="segmented" role="radiogroup" aria-label="Initial density">
+            <label><input type="radio" name="start" value="gaussian" checked /><span>Gaussian N(x₀, σ₀²)</span></label>
+            <label><input type="radio" name="start" value="stationary" /><span id="start-stationary-text">Stationary pₛ</span></label>
+          </div>
+          <div class="param">
+            <label class="param-name" for="x0-range">x₀</label>
+            <input id="x0-range" type="range" aria-label="Initial position slider" />
+            <input id="x0" type="number" step="any" aria-label="Initial position" />
+          </div>
+          <label class="field inline">
+            <span class="field-label">Spread σ₀</span>
+            <input id="sigma0" type="number" min="0" step="0.01" />
+          </label>
+        </section>
+
+        <section class="group">
+          <h2>Domain &amp; boundaries</h2>
+          <div class="row2">
+            <label class="field"><span class="field-label">From</span><input id="lo" type="number" step="any" /></label>
+            <label class="field"><span class="field-label">To</span><input id="hi" type="number" step="any" /></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span class="field-label">Left</span><select id="bc-left"></select></label>
+            <label class="field"><span class="field-label">Right</span><select id="bc-right"></select></label>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Simulation</h2>
+          <div class="row2">
+            <label class="field"><span class="field-label">Duration T</span><input id="T" type="number" min="0" step="any" /></label>
+            <label class="field"><span class="field-label">Time steps</span><select id="steps"></select></label>
+          </div>
+          <div class="row2">
+            <label class="field"><span class="field-label">Paths</span><select id="paths"></select></label>
+            <label class="field"><span class="field-label">Grid</span><select id="grid"></select></label>
+          </div>
+          <div class="param">
+            <label class="param-name wide" for="show">Drawn</label>
+            <input id="show" type="range" min="0" step="1" />
+            <output id="show-out" for="show"></output>
+          </div>
+          <div class="row2 seed-row">
+            <label class="field"><span class="field-label">Seed</span><input id="seed" type="number" step="1" /></label>
+            <button id="resample" type="button" class="btn">Resample</button>
+          </div>
+        </section>
+
+        <section class="group">
+          <h2>Show</h2>
+          <div class="checks">
+            <label><input type="checkbox" id="view-heatmap" /> Density heatmap</label>
+            <label><input type="checkbox" id="view-paths" /> Sample paths</label>
+            <label><input type="checkbox" id="view-histogram" /> Path histogram</label>
+            <label><input type="checkbox" id="view-fp" /> Fokker–Planck density</label>
+            <label><input type="checkbox" id="view-exact" /> Exact solution</label>
+            <label><input type="checkbox" id="view-stationary" /> <span id="view-stationary-text">Stationary density</span></label>
+            <label><input type="checkbox" id="view-conditioned" /> Condition on survival</label>
+            <label><input type="checkbox" id="view-correlation" /> Autocorrelation</label>
+          </div>
+          <p class="hint">With an absorbing wall, conditioning shows q = p/S, the density of the paths not yet absorbed.</p>
+          <label class="field inline">
+            <span class="field-label">Heatmap scale</span>
+            <select id="heat-scale">
+              <option value="slice">Each time normalised</option>
+              <option value="log">Log, global</option>
+            </select>
+          </label>
+        </section>
+      </aside>
+
+      <main class="main">
+        <div class="equations" aria-label="Equations being solved">
+          <p id="eq-sde" class="eq"></p>
+          <p class="eq">∂ₜp = −∂ₓ[A p] + ½ ∂ₓ²[B p],&ensp;<span id="eq-fpe-a">A = a</span>,&ensp;B = b²</p>
+          <p id="eq-cond" class="eq" hidden>q = p/S:&ensp;∂ₜq = −∂ₓ[A q] + ½ ∂ₓ²[B q] + κ(t) q,&ensp;κ = −Ṡ/S</p>
+          <p id="eq-qsd" class="eq" hidden></p>
+        </div>
+
+        <ul class="legend" aria-label="Legend">
+          <li id="lg-fp"><i class="key line" style="--c: var(--series-fp)"></i><span id="lg-fp-text">Fokker–Planck p(x,t)</span></li>
+          <li id="lg-ens"><i class="key line" style="--c: var(--series-ens)"></i>Sample paths &amp; histogram</li>
+          <li id="lg-exact"><i class="key dashed" style="--c: var(--series-exact)"></i>Exact solution</li>
+          <li id="lg-stat"><i class="key dotted" style="--c: var(--series-stat)"></i><span id="lg-stat-text">Stationary pₛ(x)</span></li>
+        </ul>
+
+        <div class="plots" id="plots">
+          <div class="cell cell-paths"><canvas id="cv-paths" aria-label="Sample paths over the density heatmap"></canvas></div>
+          <div class="cell cell-density"><canvas id="cv-density" aria-label="Density at the current time"></canvas></div>
+          <div class="cell cell-moments"><canvas id="cv-moments" aria-label="Mean, spread and survival over time"></canvas></div>
+          <div class="cell cell-corr" id="corr-cell"><canvas id="cv-corr" aria-label="Two-time and stationary autocorrelation"></canvas></div>
+        </div>
+
+        <div class="transport">
+          <button id="play" type="button" class="btn primary" aria-pressed="true">Pause</button>
+          <button id="restart" type="button" class="btn" aria-label="Restart playback">Restart</button>
+          <input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Playback time" />
+          <output id="time" class="time"></output>
+          <label class="field inline speed"><span class="field-label">Play over</span><select id="duration"></select></label>
+        </div>
+        <p class="keys">Space plays/pauses · ← → step · drag on a chart to scrub</p>
+
+        <ul class="status" id="status" aria-live="polite"></ul>
+      </main>
+    </div>
+    <div id="tooltip" class="tooltip" role="status" hidden></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

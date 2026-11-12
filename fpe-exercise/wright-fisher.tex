@@ -1,0 +1,175 @@
+% Exercise sheet for the journal club talk on Gardiner, Chapter 5 (../fpe-slides/FPE_ch5.tex).
+% The solutions are in wright-fisher-key.tex. Equation numbers are Gardiner, 2nd ed.
+\documentclass[11pt]{article}
+
+\usepackage[letterpaper,margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage[colorlinks=true,urlcolor=PineGreen]{hyperref}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+\setlist{itemsep=3pt,topsep=2pt}
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\avg}[1]{\langle #1\rangle}
+
+% Title and running header at the top of each page
+\newcommand{\sheethead}[1]{%
+  {\sffamily\Large\color{PineGreen}Genetic drift, with and without mutation}\par\vspace{2pt}
+  {\sffamily\small Exercise sheet\hfill #1}\par\vspace{-7pt}
+  \rule{\textwidth}{0.5pt}\par\vspace{2pt}}
+\newcommand{\exsec}[1]{\par\vspace{4pt}{\sffamily\bfseries\large\color{PineGreen}#1}\par\vspace{-2pt}}
+
+\begin{document}
+
+% =========================================================
+\sheethead{Journal club}
+
+\textbf{Model.} A population carries $N$ copies of a gene, each of type $A$ or type $a$, and $x$ is the fraction
+of type $A$. Neither type is fitter. Each generation,
+\begin{enumerate}
+  \item every copy mutates to the other type, independently, with probability $u$;
+  \item the next generation is $N$ copies drawn at random, with replacement, from the mutated pool
+        (Wright--Fisher resampling).
+\end{enumerate}
+Time $t$ is counted in generations. For large $N$, with $Nu$ held fixed, $x(t)$ is close to a diffusion on
+$0<x<1$. Throughout,
+\[ \theta=2Nu. \]
+Beware a clash of names: biologists call the randomness of resampling \emph{genetic drift}. It is the noise
+$B$, not the drift $A$.
+
+\textbf{Convention:} as in the talk, $B$ is the variance per unit time, $\avg{(\Delta x)^2}=B\,\Delta t$. Parts
+(a)--(d) are the core exercise; part (e) is an optional extension. Equation numbers refer to Gardiner, 2nd edition.
+
+\exsec{(a) Build the forward equation}
+Given $x$, find the mean and the mean square of the change $\Delta x$ over one generation. Keep the leading order
+in $1/N$, counting $u$ as order $1/N$. Show that
+\[ A(x)=u\,(1-2x),\qquad B(x)=\frac{x(1-x)}N, \]
+and write the forward equation for $p(x,t)$ and the backward operator $\mathcal L^\dagger$.
+\begin{itemize}
+  \item Which term comes from mutation, and which from resampling?
+  \item Why does $B$ vanish at $x=0$ and $x=1$, and why does $A$ not?
+  \item Roughly how many generations does it take for $x$ to change by an amount of order one?
+\end{itemize}
+\emph{Hint:} After mutation the fraction is $x'=x(1-u)+(1-x)u$. Resampling makes $N$ times the new fraction a
+binomial variable, with $N$ trials and success probability $x'$.
+
+\vfill
+\newpage
+
+% =========================================================
+\sheethead{Core exercise, continued}
+
+\exsec{(b) Find the stationary state}
+\begin{enumerate}
+  \item Use the potential solution (5.2.39) to show that
+        \[ p_s(x)=\frac{\Gamma(2\theta)}{\Gamma(\theta)^2}\,\bigl[x(1-x)\bigr]^{\theta-1}. \]
+        Sketch it for $\theta=\tfrac14$, $1$ and $4$. What competes with what? Why is $p_s$ U-shaped when
+        mutation is rare?
+  \item Classify the boundary $x=0$ with Feller's test (5.2.25)--(5.2.28). Show that it is regular for
+        $0<\theta<1$ and an entrance boundary for $\theta\ge1$.
+  \item When $x=0$ is regular, a boundary condition has to be chosen. Which one does the discrete model choose,
+        and why? Why does that make the potential solution the right one?
+  \item What does Gardiner's quick rule (5.2.20)--(5.2.24) predict at $x=0$? Why does it fail? Compare the
+        squared-radius example from the talk, $\dd y=(dD-2ky)\,\dd t+\sqrt{4Dy}\,\dd W$: near $x=0$, what
+        plays the role of the dimension $d$?
+\end{enumerate}
+\emph{Hints:} Near $x=0$, keep only the leading power of $x$ in $A$, in $B$, and in Feller's functions $f$ and $g$.
+The normalisation is a Beta integral, $\int_0^1[x(1-x)]^{\theta-1}\,\dd x=\Gamma(\theta)^2/\Gamma(2\theta)$
+(\S\S5.2.1, 5.2.2).
+
+\vfill
+\newpage
+
+% =========================================================
+\sheethead{Core exercise, continued}
+
+\exsec{(c) Find the eigenfunctions}
+The backward operator is $\mathcal L^\dagger f=u(1-2x)\,f'+\dfrac{x(1-x)}{2N}\,f''$.
+\begin{enumerate}
+  \item Show that $\mathcal L^\dagger$ maps a polynomial of degree $n$ to a polynomial of degree $n$. Deduce that
+        each eigenfunction $Q_n$ is a polynomial of degree $n$, and read off from the coefficient of $x^n$ that
+        \[ \lambda_n=\frac{n(n-1+2\theta)}{2N},\qquad n=0,1,2,\dots \]
+  \item Find $Q_1$ and $Q_2$.
+  \item Show that $\avg{x(t)}-\tfrac12=(x_0-\tfrac12)\,e^{-2ut}$ exactly. Why does $N$ not appear? Which rate is
+        the spectral gap?
+  \item Here $P_n=p_s\,Q_n$. Why? The heterozygosity $H=2x(1-x)$ is the probability that two copies drawn at random
+        differ. Find its stationary average,
+        \[ H_s=\frac\theta{1+2\theta}, \]
+        without doing an integral.
+  \item Interpret the two terms of $\lambda_2=1/N+4u$.
+\end{enumerate}
+\emph{Hints:} Try $Q_2=x(1-x)+c$. The relation $P_\lambda=p_sQ_\lambda$ comes from (5.2.71)--(5.2.76). Since $Q_0=1$,
+biorthogonality says $\int P_n\,\dd x=0$ for $n\ge1$ (5.2.83).
+
+\vfill
+\newpage
+
+% =========================================================
+\sheethead{Core exercise, continued}
+
+\exsec{(d) Switch off mutation}
+Now set $u=0$, so $A=0$ and $B=x(1-x)/N$. Label the modes by their degree, as in (c), so here the absorption rate
+is $\lambda_2$ and the rate of approach to the QSD is $\lambda_3-\lambda_2$ (in the talk, $\lambda_1$ and
+$\lambda_2-\lambda_1$).
+\begin{enumerate}
+  \item Show that there is no stationary density. What type are the ends now? What happens to the population?
+  \item Now $\lambda_n=n(n-1)/2N$, so $\lambda_0=\lambda_1=0$. Using $Q_1=x$, show that $\avg{x(t)}=x_0$ for all
+        $t$. Deduce the probability that type $A$ takes over the whole population, and check it against the
+        splitting probability (5.2.186)--(5.2.190).
+  \item $Q_2=x(1-x)$ decays at $\lambda_2=1/N$. Show that $P=Q/[x(1-x)]$ solves the forward equation whenever $Q$
+        solves the backward one. Compare $P_\lambda=p_sQ_\lambda$: what plays the role of $p_s$? Deduce that
+        \emph{the QSD is uniform on $(0,1)$}. Normalise so that $\int P_2Q_2\,\dd x=1$, and show that the
+        probability of keeping both types is $S(t)\simeq6x_0(1-x_0)\,e^{-t/N}$ at long times.
+  \item Unlike the $\sin(\pi x/L)$ QSD in the talk, this one does not vanish at the absorbing ends. Find the current
+        out through each end, and check that the total is $\lambda_2$. Why can $p$ stay finite at an end here?
+  \item Check that $Q_3=x(1-x)(1-2x)$, and find $\lambda_3$. At what rate does $p/S$ approach the QSD? What changes
+        if $x_0=\frac12$?
+  \item Find the mean time $T(x_0)$ until one type is lost, from (5.2.154), and evaluate $T(\frac12)$. Explain why
+        the average of $T$ over the QSD must be $1/\lambda_2=N$. Check it.
+\end{enumerate}
+\emph{Hints:} With $A=0$, (5.2.154) reads $\tfrac12BT''=-1$. You may need $\int_0^1x\ln x\,\dd x=-\tfrac14$.
+What happens to $p(x,t)$ if it starts as the QSD? (\S\S5.2.5, 5.2.7, 5.2.8)
+
+\vfill
+\newpage
+
+% =========================================================
+\sheethead{An optional extension}
+
+\exsec{(e) Optional: from one to the other}
+Let mutation be rare, $\theta\to0$ at fixed $N$.
+\begin{enumerate}
+  \item Show that $p_s\to\tfrac12\delta(x)+\tfrac12\delta(x-1)$, in the sense that a fixed neighbourhood of each end
+        holds probability $\tfrac12$. Show that $\lambda_1\to0$. Which conserved quantity of (d) does $Q_1=1-2x$
+        become?
+  \item Show that
+        \[ \frac{p_s\,Q_2}{\theta/2}\;\longrightarrow\;1-\tfrac12\delta(x)-\tfrac12\delta(x-1). \]
+        Its interior is the QSD of (d). What do the $\delta$ terms mean? Check that this limit is orthogonal to
+        both zero modes of (d), $Q_0=1$ and $Q_1=x$.
+  \item When $\theta\ll1$, the population almost always consists of a single type. New mutants appear at rate $Nu$
+        per generation, and by (d) each takes over with probability $1/N$. Show that this two-state picture
+        relaxes at exactly $\lambda_1$. So neutral variants replace each other at the mutation rate, whatever the
+        population size: Kimura's result, the basis of the molecular clock. Compare the double well in the talk.
+        Which two time scales must be well separated, and when does the picture fail?
+\end{enumerate}
+\emph{Hints:} As $\theta\to0$, $\Gamma(2\theta)/\Gamma(\theta)^2\simeq\theta/2$, and
+$\int_0^\varepsilon x^{\theta-1}\,\dd x=\varepsilon^\theta/\theta$. Hold $\varepsilon$ fixed while $\theta\to0$.
+
+\vfill
+
+{\footnotesize The Wright--Fisher diffusion is additional material beyond the book examples. References:
+M.~Kimura, \emph{Solution of a process of random genetic drift with a continuous model},
+\href{https://doi.org/10.1073/pnas.41.3.144}{Proc.\ Natl.\ Acad.\ Sci.\ USA \textbf{41}, 144 (1955)}, which solves
+part (d); M.~Kimura, \emph{Diffusion models in population genetics},
+\href{https://doi.org/10.1017/S0021900200108368}{J.\ Appl.\ Probab.\ \textbf{1}, 177 (1964)}; M.~Kimura,
+\emph{Evolutionary rate at the molecular level},
+\href{https://doi.org/10.1038/217624a0}{Nature \textbf{217}, 624 (1968)}, for part (e). The accompanying key uses
+the same part labels.\par}
+
+\end{document}

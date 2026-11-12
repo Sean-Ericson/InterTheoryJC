@@ -1,0 +1,577 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath,amssymb,mathtools}
+\usepackage{physics}
+\usepackage{bm}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,linkcolor=blue!50!black,urlcolor=blue!50!black]{hyperref}
+
+\setlist{nosep,leftmargin=*}
+\setlength{\parskip}{0.4em}
+\setlength{\parindent}{0pt}
+
+\newcommand{\gv}{\,|\,}
+\newcommand{\Lop}{\mathcal{L}}
+\newcommand{\cU}{\mathcal{U}}
+
+\title{Answers to the questions in \texttt{FPE\_ch5.tex}}
+\author{Presenter notes for the Chapter 5 talk}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\noindent
+One section per \texttt{\% Question} comment in the slides, in slide order, plus the questions inside some
+\texttt{\% TODO} comments and a section on symmetries. Notation is the deck's: $\partial_tp=-\partial_x(Ap)+\frac12
+\partial_x^2(Bp)$, $B=D$ for constant noise (so $\langle\Delta x^2\rangle=Dt$), $\cU$ the physical potential and
+$U=\cU/\gamma$. Equation numbers marked G2 are Gardiner's 2nd edition.
+
+\tableofcontents
+
+% =============================================================================
+\section{It\^o, Stratonovich, and manifolds}
+\emph{Slide: The Corresponding SDE.}
+
+\paragraph{Where the two come from.} An SDE is shorthand for an integral, and $\int b(x)\,\dd W$ needs a rule for
+where in each step $b$ is evaluated. It\^o evaluates it at the start of the step. Then $b$ is independent of the
+increment, so $\langle b\,\dd W\rangle=0$. Stratonovich evaluates it at the midpoint. Expanding
+$b(x_{\rm mid})\approx b(x)+\frac12b'(x)\,\Delta x$ and using $\Delta x\approx b\,\Delta W$ gives
+\[
+  b(x_{\rm mid})\,\Delta W \approx b\,\Delta W + \tfrac12\,b\,b'\,(\Delta W)^2 \to b\,\dd W + \tfrac12\,b\,b'\,\dd t .
+\]
+So the Stratonovich SDE $\dd x=a\,\dd t+b\circ\dd W$ is the It\^o SDE with drift $a+\frac12bb'$. With $b=\sqrt B$,
+$\frac12bb'=\frac14B'$, which is the slide's $A=a+\frac14\partial_xB$. The FPE is always written with the It\^o drift.
+In Stratonovich variables it has a neat ``sum of squares'' form:
+\[
+  \partial_tp = -\partial_x(a\,p) + \tfrac12\,\partial_x\bigl[b\,\partial_x(b\,p)\bigr].
+\]
+(Expand the last term to check that it equals $-\partial_x(\frac12bb'p)+\frac12\partial_x^2(b^2p)$.)
+
+\paragraph{Which one is physical.} It depends on where the noise comes from.
+\begin{itemize}
+  \item Noise that is really smooth, with a short but nonzero correlation time, gives Stratonovich in the white-noise
+        limit (the Wong--Zakai theorem). Ordinary calculus holds for smooth noise, and Stratonovich is the
+        calculus that keeps the ordinary chain rule.
+  \item Noise that acts in discrete kicks, with the state fixed before each kick, gives It\^o. Population models
+        and finance are like this.
+  \item A thermal particle whose friction depends on position, $\gamma(x)$, is neither. The overdamped limit of the
+        Langevin equation must reproduce the Boltzmann density, and that requires the It\^o drift
+        $A=-\cU'/\gamma+\frac12B'$, with $B=2k_BT/\gamma(x)$. This is sometimes called the isothermal or
+        H\"anggi--Klimontovich convention. The interface section of the notes compares all three ($\chi=0$, $\frac12$, $1$).
+\end{itemize}
+When $B$ is constant all three agree, which is every example in the talk.
+
+\paragraph{Manifolds: yes, this is the connection.} Under a change of variable $y=\varphi(x)$, It\^o's lemma gives
+\[
+  A_y=\varphi'A+\tfrac12\varphi''B,\qquad B_y=\varphi'^2B .
+\]
+$B$ transforms as a tensor (two upper indices), but the It\^o drift picks up a term with a second derivative of the
+coordinate change, so $A^i$ is \emph{not} a vector field. The Stratonovich chain rule has no such term: $\dd
+y=\varphi'(x)\circ\dd x$, so $a$ and $b$ both transform like components of vector fields. That is why SDEs on a
+manifold are written in Stratonovich form,
+\[
+  \dd X=V_0(X)\,\dd t+\sum_\alpha V_\alpha(X)\circ\dd W^\alpha,
+\]
+with $V_0,V_1,\dots$ vector fields. The backward operator (the generator) is then coordinate-free,
+$\Lop^\dagger=V_0+\frac12\sum_\alpha V_\alpha V_\alpha$, a sum of squares of first-order operators (H\"ormander's form).
+Its adjoint with respect to a volume form $\mu$ is the forward operator,
+$\Lop\rho=-\operatorname{div}_\mu(V_0\rho)+\frac12\sum_\alpha\operatorname{div}_\mu\bigl(V_\alpha\operatorname{div}_\mu(V_\alpha\rho)\bigr)$.
+
+Example: Brownian motion on a Riemannian manifold has generator $\frac12\Delta_g$ (Laplace--Beltrami). In coordinates,
+$\frac12\Delta_gf=\frac12g^{ij}\partial_i\partial_jf-\frac12g^{jk}\Gamma^i_{jk}\partial_if$, so its It\^o drift is
+$-\frac12g^{jk}\Gamma^i_{jk}$: a drift with no force behind it, purely from the coordinates. The radial part of
+free motion in $d$ dimensions, with drift $(d-1)D/2r$, is the simplest case.
+
+\paragraph{What this means for the index notation on the slides.} Writing $A^i$ and $B^{ij}$ with upper indices is fine
+in Cartesian coordinates, which is all Gardiner uses. Under nonlinear coordinate changes $B^{ij}$ is a tensor and $A^i$
+is not. But the current $J^i=A^ip-\frac12\partial_j(B^{ij}p)$ \emph{is} a vector density (with $p$ a density), as it
+must be if its flux through a surface is physical (slide ``Flux across any surface''). In one dimension, with
+$p_y=p/\varphi'$, a short calculation gives $J_y=J_x$: the extra drift term cancels the extra derivative term.
+
+% =============================================================================
+\section{Why the overdamped limit is \texorpdfstring{$m\,\dd v\approx0$}{m dv = 0}}
+\emph{Slide: The overdamped limit.}
+
+Write the velocity equation as relaxation toward the local terminal velocity $v_*(x)=-\cU'(x)/\gamma$:
+\[
+  \dd v = -\frac{1}{\tau_v}\bigl(v-v_*(x)\bigr)\,\dd t + \frac{\sqrt{2\gamma k_BT}}{m}\,\dd W,\qquad \tau_v=\frac m\gamma .
+\]
+Integrate the momentum equation over a step $\Delta t$ with $\tau_v\ll\Delta t\ll\tau_x$:
+\[
+  m\,\Delta v = -\gamma\,\Delta x - \cU'\,\Delta t + \sqrt{2\gamma k_BT}\,\Delta W .
+\]
+\begin{itemize}
+  \item The left side is bounded: $v$ is a thermal velocity, so $m\,\Delta v\sim\sqrt{mk_BT}$ whatever $\Delta t$ is.
+  \item The noise impulse grows like $\sqrt{2\gamma k_BT\,\Delta t}$, and the force and friction impulses grow like
+        $\Delta t$.
+  \item Their ratio is $m\,\Delta v/\text{noise}\sim\sqrt{\tau_v/\Delta t}\to0$.
+\end{itemize}
+So on any time step much longer than $\tau_v$, the inertial term is negligible next to the others, and the
+remaining terms must balance: $\gamma\,\dd x=-\cU'\,\dd t+\sqrt{2\gamma k_BT}\,\dd W$. ``$m\,\dd v\approx0$'' does
+\emph{not} mean that $v$ is constant or small. $v$ fluctuates wildly, and in the limit it is white noise; what is small
+is the momentum change compared with the impulses over a coarse step.
+
+The upper limit $\Delta t\ll\tau_x$ is needed so that $\cU'$ is roughly constant over the step; the window
+$\tau_v\ll\Delta t\ll\tau_x$ exists only if $\varepsilon=\tau_v/\tau_x=m|\cU''|/\gamma^2\ll1$.
+
+\paragraph{A check you can quote.} For a free particle ($\cU=0$) the Langevin equation is solvable (Ornstein, 1917):
+\[
+  \langle\Delta x^2\rangle = \frac{2k_BT}{\gamma}\Bigl[t-\tau_v\bigl(1-e^{-t/\tau_v}\bigr)\Bigr]
+  \;\to\;
+  \begin{cases} (k_BT/m)\,t^2 & t\ll\tau_v \ \text{(ballistic)}\\ (2k_BT/\gamma)\,t=Dt & t\gg\tau_v\ \text{(diffusive)} \end{cases}
+\]
+The FPE describes only the second regime; that is the ``valid for $t\gg\tau_v$'' on the slide.
+
+\paragraph{A caution.} With constant $\gamma$ the naive step is safe. If $\gamma$ depends on $x$, simply dropping $m\,\dd v$ and
+reading the result as It\^o gives the wrong stationary state; the correct limit has the extra drift $\frac12B'$
+(section 1).
+
+% =============================================================================
+\section{Smoluchowski's equation in Gardiner}
+\emph{Slide: Smoluchowski's equation.}
+
+Yes, in two places (2nd edition; the 4th renumbers, so use the index under ``Smoluchowski equation'' or
+``adiabatic elimination''):
+\begin{itemize}
+  \item \S5.1 says some authors call the FPE the Smoluchowski equation, after Smoluchowski's early use of it.
+  \item \S6.4, ``Adiabatic Elimination of Fast Variables'', starts from Kramers' equation (G2 \S5.3.6a) and derives the
+        Smoluchowski equation as the leading order in $1/\gamma$ (G2 (6.4.18)). It then computes the next order, the
+        corrected Smoluchowski equation (G2 (6.4.108)), which multiplies the diffusion by $1+m\cU''/\gamma^2$. That is
+        the $1\pm\varepsilon$ on the slide.
+\end{itemize}
+So your ``supposedly'' is right: what the slide does by hand is the leading order of Gardiner's systematic
+expansion. The slide now says so without the question mark.
+
+% =============================================================================
+\section{The Einstein relation}
+\emph{Slide: Smoluchowski's equation.}
+
+In physics units, with $D_{\rm phys}$ defined by $\partial_tp=D_{\rm phys}\,\partial_x^2p$ (so $\langle\Delta
+x^2\rangle=2D_{\rm phys}t$),
+\[
+  D_{\rm phys}=\frac{k_BT}{\gamma}=\mu\,k_BT,\qquad \mu=\frac1\gamma\ \text{(mobility: velocity per unit force)}.
+\]
+It ties the size of the fluctuations (diffusion) to the dissipation (friction): the simplest fluctuation--dissipation
+relation. One-line derivation: in a potential, zero current
+$J=-(\cU'/\gamma)p-D_{\rm phys}\,p'=0$ gives $p\propto e^{-\cU/\gamma D_{\rm phys}}$, and this is the Boltzmann factor
+$e^{-\cU/k_BT}$ only if $\gamma D_{\rm phys}=k_BT$.
+
+History: Einstein (1905), Sutherland (1905) and Smoluchowski (1906). With Stokes friction $\gamma=6\pi\eta a$ it
+becomes the Stokes--Einstein relation $D_{\rm phys}=k_BT/6\pi\eta a$, which Perrin used to measure Avogadro's number. In
+the deck's convention $B=D=2D_{\rm phys}$, hence ``$D/2=k_BT/\gamma$''.
+
+% =============================================================================
+\section{Why the continuity equation fixes \texorpdfstring{$\bm J$}{J} only up to a divergence-free field}
+\emph{Slide: Flux across any surface.}
+
+The continuity equation $\partial_tp+\partial_iJ^i=0$ involves $\bm J$ only through its divergence. If $\bm J$
+satisfies it, so does $\bm J+\bm K$ for any $\bm K$ with $\partial_iK^i=0$; in three dimensions, any $\bm K=\nabla\times\bm
+M$. The flux of $\bm K$ through a \emph{closed} surface is zero (divergence theorem), so the total probability in every
+region comes out the same. But the flux of $\bm K$ through an \emph{open} surface, such as $S_{12}$, need not be
+zero. So the continuity equation alone cannot say how much probability crosses $S_{12}$. Gardiner's (5.2.12) computes
+that crossing directly from two-time probabilities and finds that the particular $\bm J$ of (5.2.8) gives it. That is the
+sense in which it is ``the physical'' current.
+
+The one-dimensional version is the clearest. Divergence-free means constant, so the continuity equation fixes $J$ only
+up to an added constant. On an interval the walls fix the constant. On a circle they cannot: the free circle and the
+circle with constant drift $v$ both have the uniform stationary density $p_s=1/L$, so $p_s$ alone cannot tell you
+whether probability circulates. The formula $J=vp-\frac12Dp'$ can: $J_s=v/L$.
+
+% =============================================================================
+\section{The walls figure: axis labels and \texorpdfstring{$L=2x_0$}{L = 2x0}}
+\emph{Slide: Reflecting, absorbing, and periodic. (A \texttt{TODO} question.)}
+
+The labels are consistent, but one fact was missing from the figure itself. Lengths are in units of the start $x_0$,
+and time in units of $x_0^2/D$. All three panels use the \emph{same} Brownian path.
+\begin{itemize}
+  \item (a) Hard wall: the plotted path is $|x(t)|$. Reflected Brownian motion has the same law as $|W|$, which is
+        the image solution $g(x-x_0)+g(x+x_0)$. The shaded band $x<0$ is the forbidden side.
+  \item (b) Cliff: the path up to its first arrival at $0$ (the cross); dotted is what it would have done next.
+  \item (c) Ring: yes, the circumference is $L=2x_0$, i.e.\ $L=2$ in these units. The ring coordinate is
+        $x\bmod 2x_0$, which runs over $[0,2)$; the two horizontal lines at $0$ and $2$ are the same point of the ring
+        (the cut). When the blue path reaches $2$ it reappears at $0$, and vice versa. Dotted grey is the lift, the
+        unwrapped path, which is the original path again.
+\end{itemize}
+The slides now use a copy of the figure (made by \texttt{fpe-slides/scripts/slide\_figures.py} from the notes' own
+plotting function) whose panel (c) title says ``ring of circumference $L=2x_0$''. The notes are unchanged.
+
+% =============================================================================
+\section{Winding on the circle: a quick overview}
+\emph{Slide: Periodic boundaries, or: the circle.}
+
+\paragraph{What it is.} A point on the circle is $x\bmod L$. Follow a path continuously and never jump back at the cut:
+that gives the \emph{lift} $\tilde x(t)\in\mathbb R$, with $\tilde x(t)=x(t)+L\,N(t)$, where $N(t)\in\mathbb Z$ is the
+net number of times around (anticlockwise minus clockwise). The winding is $\Delta\tilde x(t)=\tilde x(t)-\tilde x(0)$,
+the net distance travelled around the ring. Panel (c) of the walls figure shows a path and its lift.
+
+\paragraph{Why it is new.} The position on the circle tells you where the particle is; the winding tells you how it got
+there. It exists only because the circle has a loop that cannot be shrunk to a point, so no interval has it. It is the
+observable that measures \emph{transport} around the ring.
+
+\paragraph{How it behaves.} At long times it drifts and spreads,
+\[
+  \langle\Delta\tilde x\rangle\simeq v_{\rm w}\,t,\qquad \operatorname{Var}\Delta\tilde x\simeq D_{\rm eff}\,t .
+\]
+\begin{itemize}
+  \item The winding velocity is the stationary current times the circumference, $v_{\rm w}=LJ_s$. So $v_{\rm w}\neq0$
+        exactly when $\Phi=\oint2A/B\neq0$, the non-equilibrium case.
+  \item The effective diffusion constant is nonzero even in equilibrium. For $B=D$ and a periodic potential $U$, it is the
+        Lifson--Jackson formula
+        $D_{\rm eff}=D\big/\bigl(\langle e^{2U/D}\rangle\,\langle e^{-2U/D}\rangle\bigr)$, with $\langle\cdot\rangle$ the
+        average over one period. A barrier makes it exponentially small: hopping between wells.
+\end{itemize}
+Examples: the free circle has $v_{\rm w}=0$ and $D_{\rm eff}=D$ (the ring changes where the particle is, not how far it
+goes); constant drift has $v_{\rm w}=v$; the cosine well has $D_{\rm eff}=D/I_0(\kappa)^2$.
+
+\paragraph{How it is computed.} Two equivalent ways.
+\begin{itemize}
+  \item First passage on the cover: the time $T_{\rm w}$ to first get a full circumference away, in either direction, is the
+        exit time from $(x_0-L,x_0+L)$ on the line, an absorbing-interval problem. Without drift, windings are a random
+        walk of steps $\pm L$, and $D_{\rm eff}=L^2/T_{\rm w}$.
+  \item One eigenvalue: $\langle e^{s\Delta\tilde x}\rangle\sim e^{\Lambda(s)t}$, where $\Lambda(s)$ is the top
+        eigenvalue of the forward operator with $\partial_x\to\partial_x-s$, acting on periodic functions. Then
+        $v_{\rm w}=\Lambda'(0)$ and $D_{\rm eff}=\Lambda''(0)$. For constant drift, $\Lambda(s)=vs+\frac12Ds^2$.
+\end{itemize}
+The second way is Bloch's theorem in disguise: $\Lambda(s)$ is the lowest band of the periodic problem on the line,
+continued to imaginary quasi-momentum $q=-is$. $D_{\rm eff}$ is the curvature of the band at $q=0$, the analogue of an
+inverse effective mass.
+
+\paragraph{Where it matters physically.} The dc voltage of a Josephson junction (the phase winds), a colloid driven
+around a ring trap, rotary molecular motors, phase slips of an oscillator. For an interdisciplinary audience, the
+one-liner is: \emph{a ring has a hole, and probability can circulate around it; the winding counts the circulation.}
+
+% =============================================================================
+\section{The squared-radius figure, panel by panel}
+\emph{Slide: Feller's Classification, example.}
+
+\paragraph{The process.} Take an overdamped particle in an isotropic harmonic trap in $d$ dimensions: each component obeys
+$\dd x_i=-kx_i\,\dd t+\sqrt D\,\dd W_i$. Its squared distance from the centre, $y=\sum_ix_i^2$, obeys (It\^o's lemma,
+$\dd x_i^2=D\,\dd t$)
+\[
+  \dd y=\bigl(dD-2ky\bigr)\,\dd t+2\sqrt D\sum_ix_i\,\dd W_i=\bigl(dD-2ky\bigr)\,\dd t+\sqrt{4Dy}\;\dd W .
+\]
+The last equation makes sense for any real $d$, which is how it also describes a population with demographic noise
+($d$ is an immigration rate; $d=0$ is Feller's branching diffusion) and the CIR interest-rate model. Units:
+$\ell^2=D/k$ for $y$, and $1/k$ for time. The noise $B=4Dy$ vanishes at $y=0$, so Feller's test decides what happens
+there: exit for $d\le0$, regular for $0<d<2$, entrance for $d\ge2$.
+
+\paragraph{(a) Sample paths, all from $y_0=\ell^2$.}
+\begin{itemize}
+  \item Blue, $d=3$: $|\bm x|^2$ of a 3D trapped particle. It never reaches $y=0$; a Brownian particle in two or more
+        dimensions does not hit a given point. That is an entrance: unreachable from inside, but a particle started
+        exactly at $0$ would leave at once.
+  \item Green, $d=1$: $x^2$ of a 1D trapped particle. The black cross marks the first time it reaches $y=0$ (the moment $x$
+        changes sign). It then leaves again: a regular boundary, reached and left. Because $y=x^2$, this path is the
+        \emph{reflected} choice; the absorbed choice would stop at the cross.
+  \item Orange, $d=0$: Feller's branching diffusion. At $y=0$ both drift and noise vanish, so once it arrives it stays
+        (the thick orange line along the axis from $kt\approx1.5$): an exit, here extinction of the population.
+\end{itemize}
+
+\paragraph{(b) The spectrum as a function of $d$.} Two families of eigenvalues, in units of $k$:
+\begin{itemize}
+  \item blue, horizontal: reflected at $0$, $\lambda_n=2nk$, including the stationary $\lambda_0=0$. They exist for
+        $d>0$, where $p_s\propto y^{d/2-1}e^{-y/\ell^2}$ is integrable at $0$;
+  \item orange, falling: absorbed at $0$, $\lambda_n=(2n+2-d)k$. They exist for $d<2$, where the origin can be
+        reached. The lowest, $(2-d)k$, is the decay rate of the survival probability.
+\end{itemize}
+The shading is Feller's classification read off the spectrum. In the exit window only the absorbed family exists:
+nothing to choose. In the entrance window only the reflected family: the origin is never reached, so there is nothing to
+absorb, and the absorption rate $(2-d)k$ has fallen to $0$ at $d=2$. In the regular window both exist, and choosing the
+boundary condition chooses the spectrum. A consistency check: at $d=1$ the reflected rates $0,2k,4k,\dots$ are the
+\emph{even} OU levels and the absorbed rates $k,3k,5k,\dots$ the \emph{odd} ones. That is the reflection symmetry of
+section~15.
+
+\paragraph{(c) The density near the boundary.} $\ell^2p(y,t\gv y_0)$ at $kt=0.25$, on log--log axes, to show the power
+laws as $y\to0$:
+\begin{itemize}
+  \item reflected: $p\propto y^{d/2-1}$. For $d=3$ it vanishes like $y^{1/2}$ (blue); for $d=1$ it diverges like
+        $y^{-1/2}$ (solid green), which is just the Jacobian of $y=x^2$: $p_y=p_x/2\sqrt y$ with $p_x$ finite at $x=0$;
+  \item absorbed: $p$ tends to a nonzero constant (dashed green, $d=1$; dashed orange, $d=-1$).
+\end{itemize}
+The lesson: where $B$ vanishes, ``absorbing'' does not mean $p=0$, contrary to Gardiner's (5.2.14), which assumes $B>0$.
+What vanishes is $p/p_s$, the backward function. In the $x$ variable the absorbed density is $2\sqrt y\,p_y\propto|x|$,
+which does vanish at the origin, as an absorbing wall with $B>0$ should.
+
+% =============================================================================
+\section{Adjoints: do they need an inner product, and when are \texorpdfstring{$\Lop$ and $\Lop^\dagger$}{L and L-dagger} adjoint?}
+\emph{Slides: It's Linear Algebra Time. (A \texttt{TODO} question and a \texttt{Question}.)}
+
+\paragraph{No inner product is needed.} The general notion is the Banach-space adjoint (or transpose). Given a space $X$ and
+a bilinear pairing $\langle f,p\rangle$ between $X$ and a second space $Y$ (typically its dual), the adjoint of
+$T:X\to X$ is the operator $T^\dagger$ on $Y$ with $\langle f,Tp\rangle=\langle T^\dagger f,p\rangle$ for all $p$ and $f$.
+The Hilbert-space adjoint is the special case $Y=X$, with the inner product as the pairing.
+
+Here the natural pairing is the expectation value,
+\[
+  \langle f,p\rangle=\int f(x)\,p(x)\,\dd x=\mathbb E_p[f],
+\]
+between densities, $p\in L^1$ (absolutely integrable), and bounded observables, $f\in L^\infty$. $L^\infty$ is the dual of
+$L^1$, so this is exactly the setting of a space and its dual. Probabilists say the same thing: $\Lop^\dagger$ is the
+\emph{generator}, acting on observables, and $\Lop$ is its dual, acting on measures. The dagger suggests a Hilbert
+space, but none is involved until we want orthogonality (section 10).
+
+\paragraph{Yes: adjoint exactly when the boundary term vanishes.} The integration by parts (Lagrange's identity)
+\[
+  \langle f,\Lop p\rangle-\langle\Lop^\dagger f,p\rangle=\Bigl[-fJ-\tfrac12Bp\,\partial_xf\Bigr]_a^b
+\]
+holds for any smooth $p$ and $f$, whatever their boundary values. The differential expressions are therefore always
+\emph{formal} adjoints. But an operator is a differential expression \emph{together with its domain}: the functions it is
+allowed to act on, which is where the boundary conditions live. $\Lop$ (with its domain) and $\Lop^\dagger$ (with
+its domain) are adjoint exactly when the boundary term vanishes for every $p$ in the first domain and every $f$ in the
+second. Given the forward boundary conditions, this \emph{determines} the backward ones; this is how Gardiner derives
+them in \S5.2.4 (G2 (5.2.65)--(5.2.69)):
+\begin{itemize}
+  \item absorbing, $p=0$: the term is $-fJ$, and $J$ at the wall is not zero, so we need $f=0$;
+  \item reflecting, $J=0$: the term is $-\frac12Bp\,\partial_xf$, and $p$ at the wall is not zero, so we need
+        $\partial_xf=0$ (for $B\neq0$);
+  \item circle: the end points are the same point and everything is periodic, so the terms at $a$ and $b$ cancel;
+  \item infinity: $p$ and $J$ decay, and the terms vanish for bounded $f$ and $f'$;
+  \item singular boundaries where $B\to0$ (Feller): the term can vanish by itself, and that is what ``no condition
+        needed'' means for entrance and natural boundaries;
+  \item a partially absorbing wall, $J=\kappa p$, pairs with a Robin condition on $f$, $\frac12B\,\partial_xf=-\kappa f$.
+\end{itemize}
+Mismatched domains (say, forward reflecting with backward absorbing) are not adjoint, and the biorthogonality
+$\int P_\lambda Q_{\lambda'}=\delta_{\lambda\lambda'}$ would fail.
+
+% =============================================================================
+\section{What is \texorpdfstring{$L^2$}{L2}? The three spaces}
+\emph{Slide: Biorthogonality.}
+
+$L^2(a,b)$ is the space of square-integrable functions, $\int f^2\,\dd x<\infty$, with the inner product $\langle
+f,g\rangle=\int fg\,\dd x$. It is a Hilbert space. ``$\Lop$ is symmetric in $L^2$'' means $\langle
+g,\Lop f\rangle=\langle\Lop g,f\rangle$ for all $f$ and $g$ in its domain. A weighted $L^2(w)$ has $\langle
+f,g\rangle_w=\int fg\,w\,\dd x$. Three spaces matter:
+
+\begin{center}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Space & Contains & Operator & Used for \\
+\midrule
+$L^1$ & densities & $\Lop$ & probability: stationary states, QSDs \\
+$L^\infty$ & bounded observables & $\Lop^\dagger$ & survival, exit times, splitting \\
+$L^2(1/p_s)$ & $\int p^2/p_s<\infty$ & $\Lop$ (symmetric if $J_s=0$) & orthogonality, gaps \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{itemize}
+  \item In plain $L^2(\dd x)$, $\Lop$ is not symmetric unless $p_s$ is uniform. Its adjoint there is $\Lop^\dagger$, the same
+        expression as before, since both pairings are $\int fg\,\dd x$. So $Q_\lambda$, the eigenfunctions of
+        $\Lop^\dagger$, are the left eigenvectors of $\Lop$, and $P_\lambda$ are its right eigenvectors.
+  \item In $L^2(1/p_s)$, with zero stationary current, $\Lop$ is symmetric:
+        $\int g\,\Lop p/p_s\,\dd x=\int p\,\Lop g/p_s\,\dd x$. That gives real eigenvalues, orthogonal eigenfunctions
+        ($\int P_\lambda P_{\lambda'}/p_s=\delta_{\lambda\lambda'}$, the third form on the slide), and completeness:
+        the spectral theorem.
+  \item The spaces are linked by two maps. $p\mapsto p/p_s$ takes $L^2(1/p_s)$ to $L^2(p_s)$ and turns $\Lop$ into
+        $\Lop^\dagger$ (Gardiner's $p=p_sq$, G2 (5.2.71)--(5.2.72)). $p\mapsto p/\sqrt{p_s}$ takes it to plain $L^2$, where
+        $\Lop$ becomes minus a Schr\"odinger operator, $H=-\frac12D\partial_x^2+V$ with $V=A^2/2D+A'/2$.
+  \item The weighted norm has a meaning: $\int(p-p_s)^2/p_s\,\dd x$ is the $\chi^2$ distance from equilibrium, and it
+        only decreases,
+        $\dv{t}\int p^2/p_s\,\dd x=-\int Bp_s\bigl[\partial_x(p/p_s)\bigr]^2\dd x\le0$. That is why all $\lambda\ge0$.
+\end{itemize}
+On a bounded domain all three spaces give the same discrete spectrum. On unbounded domains they can differ; the
+continua of QSDs on the ``caution'' slide are positive eigenfunctions in $L^1$ at $\lambda$ that are not in the $L^2$
+spectrum.
+
+% =============================================================================
+\section{The propagator line of the quantum-mechanics table}
+\emph{Slide: Analogy with Quantum Mechanics.}
+
+In quantum mechanics the propagator is the amplitude to go from $x_0$ to $x$ in time $t$,
+\[
+  K(x,t;x_0)=\langle x|e^{-iHt/\hbar}|x_0\rangle=\sum_n\langle x|n\rangle\langle n|x_0\rangle\,e^{-iE_nt/\hbar}
+  =\sum_n\phi_n(x)\,\phi_n^*(x_0)\,e^{-iE_nt/\hbar},
+\]
+obtained by inserting the resolution of the identity $\sum_n|n\rangle\langle n|=1$. Any wavefunction evolves by
+$\psi(x,t)=\int K(x,t;x_0)\,\psi(x_0,0)\,\dd x_0$.
+
+The FPE line is the same construction. $p(x,t\gv x_0,0)$ is the kernel of $e^{t\Lop}$, and the resolution of the identity
+is the completeness relation $\sum_\lambda P_\lambda(x)\,Q_\lambda(x_0)=\delta(x-x_0)$ (the $t=0$ case). Any density evolves
+by $p(x,t)=\int p(x,t\gv x_0,0)\,p(x_0,0)\,\dd x_0$.
+
+The differences are instructive.
+\begin{itemize}
+  \item The ``bra'' is $\phi_n^*$ in quantum mechanics because $H$ is Hermitian: its left eigenvectors are the conjugates of
+        its right ones. $\Lop$ is not symmetric in plain $L^2$, so its left eigenvectors are a different set, the
+        $Q_\lambda$.
+  \item $K$ is an amplitude; $p(x,t\gv x_0,0)$ is a probability density. It is positive, and $\int p\,\dd x=1$ because
+        $Q_0=1$ and $\int P_\lambda\,\dd x=0$ for $\lambda\neq0$.
+  \item Setting $t=-i\tau$ turns $K$ into the Euclidean (heat) kernel $\sum_n\phi_n(x)\phi_n^*(x_0)e^{-E_n\tau/\hbar}$.
+        Through $p=\sqrt{p_s}\,\psi$ the FPE propagator is exactly that kernel for $H$, dressed with the ground state:
+        $p(x,t\gv x_0,0)=\sqrt{p_s(x)/p_s(x_0)}\;\sum_\lambda\psi_\lambda(x)\psi_\lambda(x_0)e^{-\lambda t}$.
+\end{itemize}
+
+% =============================================================================
+\section{The spectra figure, column by column}
+\emph{Slide: Example spectra.}
+
+Each column is one problem, with its eigenvalues in its own natural unit (written under it). Black ticks are discrete
+eigenvalues; shaded bands are continua; the orange arrow is the gap that controls the long-time behaviour.
+\begin{enumerate}
+  \item Reflecting interval: $0,1,4,9,\dots$ in units of $\pi^2D/2L^2$. $\lambda=0$ is the stationary state; the arrow is
+        the relaxation rate $\lambda_1$.
+  \item Absorbing interval: $1,4,9,\dots$ No zero: nothing survives. The lowest level is the decay rate of $S$, and the
+        arrow $\lambda_2-\lambda_1=3$ is the rate of approach to the QSD.
+  \item Free half-line: a continuum down to $0$, no gap, so relaxation is algebraic ($t^{-1/2}$).
+  \item Drift into a reflecting floor (sedimentation): the stationary $\lambda=0$, isolated below a continuum that
+        starts at $v^2/2D=1/2\tau$. The gap is the edge of the continuum.
+  \item OU on the line: $0,1,2,\dots$ in units of $k$. Gap $k$ on an infinite domain, because the trap confines.
+  \item Harmonic well, reflecting at the bottom and absorbing at $L=2.5\ell$ (the ``escape from a trap'' example).
+\end{enumerate}
+\paragraph{The last column.} Right: the lowest eigenvalue is not zero. The wall at $2.5\ell$ is absorbing, so there is
+no stationary state and no $\lambda=0$; every particle eventually escapes. But the lowest eigenvalue is tiny,
+$\lambda_0\approx0.005\,k$, too small to see on the axis, so the grey arrow labels it. It is the Kramers escape rate:
+$\frac{2k}{\sqrt\pi}\frac L\ell e^{-L^2/\ell^2}$ with $L/\ell=2.5$ gives about $0.005\,k$ after the first correction.
+The next level is at about $2.2\,k$, so the orange arrow, $\lambda_1-\lambda_0$, is about $450$ times $\lambda_0$. That ratio is
+the metastability: the particle equilibrates in the well (rate $\approx2.2k$) long before it escapes (rate
+$0.005k$). Compare the reflecting half-line, $0,2k,4k,\dots$: a far-away cliff barely moves the upper levels but turns
+the $0$ into an exponentially small escape rate. SDE Explorer, opened from the ``escape from a trap'' slide, prints
+$\lambda_0=0.004954$ and $\lambda_1-\lambda_0=2.232$.
+
+% =============================================================================
+\section{Why \texorpdfstring{$\lambda_2-\lambda_1$}{lambda2 - lambda1} sets the approach to the QSD}
+\emph{Slide: Quasi-Stationary Distributions, absorbing walls.}
+
+Expand and divide:
+\[
+  \tilde p=\frac pS
+  =\frac{c_1P_1e^{-\lambda_1t}+c_2P_2e^{-\lambda_2t}+\cdots}{c_1\bar P_1e^{-\lambda_1t}+c_2\bar P_2e^{-\lambda_2t}+\cdots}
+  =\frac{P_1}{\bar P_1}\cdot\frac{1+\frac{c_2P_2}{c_1P_1}\,e^{-(\lambda_2-\lambda_1)t}+\cdots}{1+\frac{c_2\bar P_2}{c_1\bar P_1}\,e^{-(\lambda_2-\lambda_1)t}+\cdots},
+\]
+with $c_n=Q_n(x_0)$ and $\bar P_n=\int P_n\,\dd x$. Dividing by $S$ removes the common factor $e^{-\lambda_1t}$, the
+overall loss of probability. What is left is how fast the second mode dies \emph{relative to the first}, and that is
+$e^{-(\lambda_2-\lambda_1)t}$. So $\tilde p=\text{QSD}+O(e^{-(\lambda_2-\lambda_1)t})$.
+
+It is the same reason the power method of linear algebra converges at the ratio of the top two eigenvalues: normalising at
+each step discards the overall scale, and only the relative weights evolve. If the start is symmetric and $c_2=0$, the
+rate is $\lambda_3-\lambda_1$ instead (section 15).
+
+% =============================================================================
+\section{Plot Lab and SDE Explorer in the talk}
+\emph{Slide: QSD example. (A \texttt{TODO} question.)}
+
+Yes, the QSD example is a very good spot. In SDE Explorer you watch sample paths get killed at the walls while the histogram
+of survivors settles onto the QSD, and the exit rate $-\dot S/S$ climbs to $\lambda_1$ live. Plot Lab's ``free diffusion,
+absorbing walls'' page shows the same exact curves with sliders for $x_0$, $L$ and $D$.
+
+The slides now have small buttons at the top right of these frames:
+\begin{itemize}
+  \item Plot Lab only: the walls figure (\texttt{physical}), the squared-radius example (\texttt{sqrt}), the spectra
+        (\texttt{spectra}), the reductions tree (\texttt{reductions}: each box of the map links to its page), walls by
+        images (\texttt{free-summary});
+  \item Plot Lab and SDE Explorer: the QSD example, the box, the ring, constant drift, OU, and escape from a trap.
+\end{itemize}
+Every Plot Lab page also has its own ``Open in SDE Explorer'' button. I checked two of the links (the absorbing interval in
+Plot Lab, and the escape problem in SDE Explorer) with both dev servers running; they open the right process and walls.
+
+For the talk:
+\begin{itemize}
+  \item Run \texttt{npm run dev} in \texttt{plot-lab/} and \texttt{sde-explorer/} beforehand (ports 5174 and 5173), or
+        deploy the built apps side by side and change the two URLs in the macros \verb|\plotlab| and \verb|\sdeexplorer| at
+        the top of the \texttt{.tex} file.
+  \item Some PDF viewers ask before opening an external link; do a practice click in the viewer you will present with.
+\end{itemize}
+
+% =============================================================================
+\section{Symmetries in the solutions}
+\emph{New slides: Symmetries (three frames), and remarks in the examples.}
+
+A symmetry of the problem (domain, walls, $A$ and $B$) is an operation that commutes with $\Lop$. Commuting operators can be
+diagonalised together, so symmetries label the eigenfunctions, forbid some overlaps (selection rules), and let one solve a
+big problem from a smaller one. Each one below shows up somewhere in the examples.
+
+\subsection{Reflection}
+\begin{itemize}
+  \item \textbf{Parity.} If the domain is symmetric about $c$, $B$ is even and $A$ is odd, the reflection $R:x\mapsto2c-x$
+        commutes with $\Lop$. Eigenfunctions are even or odd about $c$: $\cos$ and $\sin$ in the box, $H_n$ of definite parity
+        for OU.
+  \item \textbf{Selection rules.} A start at $c$, or any even initial density, has no overlap with odd modes; an even
+        observable never sees them. The box started at its centre relaxes at $\lambda_2=4\lambda_1$; in OU, $\langle x\rangle$
+        is a single exponential at $k$ (only $H_1$), while $\langle x^2\rangle$ relaxes at $2k$ (only $H_2$).
+  \item \textbf{Sectors are walls.} An even density has $J=0$ at $c$; an odd one has $p=0$ there. So the even sector of a
+        symmetric problem is the half problem with a reflecting wall at $c$, and the odd sector is the half problem with an
+        absorbing wall. That is the method of images (a $+$ image or a $-$ image), and it is ``folding'' in the notes: the
+        mixed interval unfolds into an absorbing interval of twice the length; the squared-radius spectrum at $d=1$ splits
+        into even and odd OU levels.
+  \item \textbf{The double well as a tunnelling doublet.} In the symmetrised (Schr\"odinger) form, the ground state
+        $\sqrt{p_s}$ is even and the first excited state is odd, nearly $\pm\sqrt{p_s}$ in the two wells. In quantum
+        mechanics this pair is the tunnelling doublet, split by $\Delta E\propto e^{-S/\hbar}$. Here the splitting is
+        $\lambda_1=2r$, twice the Kramers hopping rate, and the odd backward eigenfunction $Q_1\approx2\pi_c-1$ is the
+        committor. Kramers' formula is the FPE's version of a WKB tunnelling estimate.
+\end{itemize}
+
+\subsection{Translations}
+\begin{itemize}
+  \item \textbf{Fourier modes.} On the line with constant coefficients, translations commute with $\Lop$: eigenfunctions
+        are $e^{ikx}$, and $p$ depends only on $x-x_0$.
+  \item \textbf{The circle as a quotient.} The circle is the line modulo translations by $L$, so its propagator is the line's
+        summed over all translates (the cover), every image with a $+$ sign. A mirror imposes a condition and can flip a
+        sign; a translation imposes nothing, it is just another way of arriving at the same point.
+  \item \textbf{Doublets.} With rotations and a reflection, each nonzero level of the free circle is doubly degenerate:
+        $\cos q_mx$ and $\sin q_mx$ about any point, which are the reflecting and the absorbing intervals of length $L/2$.
+        In the notes' cosine well the doublets survive (exactly) without full rotation symmetry; a $\cos2x$ term would split
+        them.
+  \item \textbf{Bloch.} With periodic coefficients on the line, translations by $L$ still commute with $\Lop$. Eigenfunctions
+        are Bloch waves, and the winding statistics come from the lowest band near zero quasi-momentum (section 7):
+        $D_{\rm eff}$ is its curvature.
+\end{itemize}
+
+\subsection{Boosts, gauges and scaling}
+\begin{itemize}
+  \item \textbf{Galilean boost.} Constant drift on the line is free motion in the frame $x-vt$. It fails with walls (they
+        would move), and on the circle it is the only way to remove the drift, since the gauge factor is not periodic.
+  \item \textbf{The gauge} $p=e^{\alpha(x-x_0)-t/2\tau}u$ is not a symmetry but a similarity transformation: it maps the
+        drift problem onto the free one, shifting every rate by $1/2\tau$ and turning reflecting walls into Robin walls. It is
+        the symmetrisation $p=\sqrt{p_s}\psi$ for constant $A$.
+  \item \textbf{Diffusive scaling.} $x\to cx$, $t\to c^2t$ leaves the free equation unchanged. So the free propagator is
+        $(Dt)^{-1/2}$ times a function of $(x-x_0)/\sqrt{Dt}$; the half-line survival $\operatorname{erf}(x_0/\sqrt{2Dt})$ depends
+        only on $x_0^2/Dt$; any problem with one length $L$ has rates $\propto D/L^2$ and times $\propto L^2/D$. Drift and
+        confinement break the scaling by adding their own scales, $D/|v|$ and $\sqrt{D/k}$.
+  \item \textbf{OU's map} $y=xe^{kt}$, with the clock $\theta=(e^{2kt}-1)/2k$, is a time-dependent rescaling that turns OU
+        into free diffusion. It keeps a wall at $x=0$ fixed (it is a fixed point of the rescaling) and moves any other wall,
+        which is why the escape problem stops at Kummer functions.
+\end{itemize}
+
+\subsection{Time reversal and detailed balance}
+\begin{itemize}
+  \item A stationary process is \emph{reversible} if a film of it run backwards has the same statistics
+        (detailed balance):
+        \[ p(x,t\gv y,0)\,p_s(y)=p(y,t\gv x,0)\,p_s(x). \]
+  \item In the expansion this holds exactly when $P_\lambda=p_sQ_\lambda$. Then
+        \[ P_\lambda(x)\,Q_\lambda(y)\,p_s(y)=p_s(x)\,Q_\lambda(x)\,Q_\lambda(y)\,p_s(y), \]
+        which is symmetric in $x\leftrightarrow y$. So Gardiner's
+        relation $P=p_sQ$ \emph{is} time-reversal symmetry. Equivalently, $J_s=0$; equivalently, $\Lop$ is symmetric in
+        $L^2(1/p_s)$, so the spectrum is real.
+  \item In one dimension with a wall (or $J(\pm\infty)=0$), $J_s$ is a constant that vanishes at the wall, so detailed
+        balance is automatic. Gardiner says it is ``almost trivial in one variable systems''.
+  \item Breaking it needs a loop or more dimensions. On a circle the obstruction is $\Phi=\oint2A/B$; a driven ring has
+        $J_s\neq0$, complex-conjugate pairs of eigenvalues ($\lambda_m=\frac12Dq_m^2+ivq_m$ for constant drift), and a density
+        that circulates as it relaxes. In $n$ dimensions the obstruction is a curl: detailed balance needs
+        $B^{-1}(2\bm A-\partial\cdot B)$ to be a gradient (Gardiner's potential conditions).
+\end{itemize}
+
+\subsection{Hidden symmetries}
+\begin{itemize}
+  \item \textbf{Forward--backward duality.} $\Lop$ and $\Lop^\dagger$ have the same spectrum, with $P_\lambda\leftrightarrow
+        Q_\lambda$ and the wall conditions paired (section 9).
+  \item \textbf{Partner potentials (supersymmetry).} With $B=D$, the symmetrised operator factorises,
+        $H=\mathcal A^\dagger\mathcal A$ with $\mathcal A=\sqrt{D/2}\,(\partial_x-A/D)$, and $\mathcal A\sqrt{p_s}=0$. The
+        partner $\mathcal A\mathcal A^\dagger$ is the same problem with $U\to-U$, and the two share every nonzero rate. For
+        OU the partner of the trap is the inverted trap, whose rates are $k,2k,\dots$: OU's ladder with the $0$ removed. In
+        the notes this explains the ``ladders by algebra'' box of the tree, and why $U\to-U$ swaps exit and entrance
+        boundaries.
+  \item \textbf{Coordinate invariance.} Feller's type of a boundary does not change under a change of variable
+        ($y=r^2$, Lamperti, $\theta=2\arctan x$), because his integrals do not. A boundary can look regular in one chart and
+        singular in another, but its type belongs to the process. Stratonovich form makes the same point for the SDE
+        itself (section 1).
+\end{itemize}
+
+\end{document}
